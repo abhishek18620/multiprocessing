@@ -21,11 +21,10 @@ class Scraper():
         try:
             headers={}
             headers["User-Agent"]="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0"
+            print("Url Requested :  {0}" .format(url))
             prereq=req.Request(url,None,headers=headers)
-            #print(prereq)
             requ=req.urlopen(prereq)
             resp=requ.read().decode()
-            #print(type(resp))
             return self.CleanHtml(resp)
             #f.write(resp)
         except:
@@ -42,23 +41,23 @@ class Scraper():
 class HtmlEditor():
     def __init__(self,parent=None):
         #home page
-        self.url="https://www.si.com/swimsuit/models"
-        self.fout=open("output.txt",'w')
+        self.url="https://www.si.com"
+        #self.fout=open("output.txt",'w')
         self.fhtml=open("html.txt",'w')
         self.scrape=Scraper()
         self.Years_extractor()
+        self.fhtml.close()
 
     def Years_extractor(self):
-        clean=self.scrape.download_page(self.url)
+        clean=self.scrape.download_page(self.url + "/swimsuit/models")
         try:
             #fhtml.write(str(clean))
             #read pages for each model
             for data in clean.findAll('a' , {"class" : "tile-image"}):
-                self.url="https://www.si.com"+data.get('href')
-                print("\n\nHead url for model = {0}" .format(self.url))
-                cleanedchild=self.scrape.download_page(self.url)
+                baseurl=self.url+data.get('href')
+                #print("\n\nHead url for model = {0}" .format(self.url))
+                cleanedchild=self.scrape.download_page(baseurl)
                 #read specific year's shoots for each model
-                #self.fhtml.write(str(cleanedchild))
                 state=False
                 for subdata in cleanedchild.find_all("div" , class_ = "model-years"):
                     state=True
@@ -87,11 +86,11 @@ class HtmlEditor():
             print("BS Error")
 
     def image_link_generator(self,link):
-        ctr=1
+        ctr=2
         while True:
-            link = link + '#' + str(ctr)
-            print("Fetching url = {0}     ......" .format(link))
-            clean=self.scrape.download_page(link)
+            #print("Fetching url = {0}     ......" .format(link))
+            self.fhtml.write("\n\nURL : " + link + '#' + str(ctr))
+            clean=self.scrape.download_page(link +'#' + str(ctr))
             if not clean:
                 break
             ctr=ctr+1
