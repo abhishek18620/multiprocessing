@@ -1,7 +1,5 @@
 # Whats more interesting than Fucking SwimSuit Illustrated Models images...Haha;)
 # Let's start multitasking with some web scraping
-# I'll scrape through my router page and grab active clients with all  information possible
-# coding: UTF-8
 try:
     from urllib import request as req
     from urllib.request import URLError
@@ -22,7 +20,7 @@ class Scraper():
     def download_page(self,url):
         try:
             headers={}
-            headers["User-Agent"]='Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0'
+            headers["User-Agent"]="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0"
             prereq=req.Request(url,None,headers=headers)
             #print(prereq)
             requ=req.urlopen(prereq)
@@ -43,19 +41,37 @@ class Scraper():
 
 class HtmlEditor():
     def __init__(self,parent=None):
+        #home page
         self.url="https://www.si.com/swimsuit/models"
-        fout=open("output.txt",'w')
-        fhtml=open("html.txt",'w')
-        scrape=Scraper()
-        clean=scrape.download_page(self.url)
+        self.fout=open("output.txt",'w')
+        self.fhtml=open("html.txt",'w')
+        self.scrape=Scraper()
+        self.Years_extractor()
+
+    def Years_extractor(self):
+        clean=self.scrape.download_page(self.url)
         try:
             #fhtml.write(str(clean))
+            #read pages for each model
             for data in clean.findAll('a' , {"class" : "tile-image"}):
                 self.url="https://www.si.com"+data.get('href')
-                print("Fetching url = {0}......" .format(self.url))
-                cleanedchild=scrape.download_page(self.url)
-                fhtml.write(str(cleanedchild))
-                # ctr = 0
+                print("\n\nHead url for model = {0}" .format(self.url))
+                cleanedchild=self.scrape.download_page(self.url)
+                #read specific year's shoots for each model
+                #self.fhtml.write(str(cleanedchild))
+                state=False
+                for subdata in cleanedchild.find_all("div" , class_ = "model-years"):
+                    state=True
+                    for a in subdata.find_all('a'):
+                    #print(subdata.find('a')["href"])
+                        singleurl=self.url + a.get("href")
+                        #print("Fetching url = {0}     ......" .format(singleurl))
+                        self.image_link_generator(singleurl)
+
+                if not state:
+                    #print("Fetching url = {0}     ......" .format(self.url))
+                    self.image_link_generator(self.url)
+
                 # while True:
                     # try:
                         # ctr=ctr+1
@@ -69,6 +85,19 @@ class HtmlEditor():
                         # break
         except:
             print("BS Error")
+
+    def image_link_generator(self,link):
+        ctr=1
+        while True:
+            link = link + '#' + str(ctr)
+            print("Fetching url = {0}     ......" .format(link))
+            clean=self.scrape.download_page(link)
+            if not clean:
+                break
+            ctr=ctr+1
+            self.fhtml.write(str(clean))
+
+
 if __name__=='__main__':
     obj=HtmlEditor()
 
