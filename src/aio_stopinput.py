@@ -27,7 +27,7 @@ def solve1():
 @asyncio.coroutine
 def solve2():
     for i in range(10):
-        print("solve2" + repr(i))
+        print("solve 2" + repr(i))
         """
         yield (return) : hands the control
                          back to event loop
