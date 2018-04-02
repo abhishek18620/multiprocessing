@@ -16,7 +16,7 @@ class EncryptionECDH(diffie_hellman.ECDH):
 
 
     def secretGeneration(self,person,receivedKey):
-        self.generateSecretKey(person,receivedKey)
+        self.generateSharedSecret(person,receivedKey)
 
 
     def extractPublicKey(self):

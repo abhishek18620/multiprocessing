@@ -9,7 +9,8 @@ import cryptography
 class EncryptionECDH(diffie_hellman.ECDH):
     def __init__(self,person,receivedKey):
         #generates all
-        self.generate(person,receivedKey)
+        self.generate(person)
+        self.generateSharedSecret(person,receivedKey)
 
     def extractPublicKey(self):
         return self.getPublic()

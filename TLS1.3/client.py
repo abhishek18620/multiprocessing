@@ -38,8 +38,9 @@ class Client:
             reader,writer= await asyncio.open_connection('127.0.0.1',7777,loop=loop)
             print("Sending message......{0}".format(message))
             # converting object into bytes
-            nonlocal msg1
-            msg1=self.encrypt.extractPublicKey()
+            #nonlocal msg1
+            #msg1=self.encrypt.extractPublicKey()
+            #WARNING : local object not pickleable
             msg=pickle.dumps(msg1)
             writer.write(msg)
             """

@@ -7,6 +7,7 @@ Doc: http://asyncio.readthedocs.io/en/latest/webscraper.html
 from Encryption import EncryptionECDH
 import asyncio
 import time
+import pickle
 
 class Server:
     ques={
@@ -17,11 +18,11 @@ class Server:
     def __init__(self):
         print(self.ques)
         self.loop=asyncio.get_event_loop()
-        self.coro=asyncio.start_server(self.handleClient,'127.0.0.1',7777,loop=loop)
+        self.coro=asyncio.start_server(self.handleClient,'127.0.0.1',7777,loop=self.loop)
         server=self.loop.run_until_complete(self.coro)
         print("Serving on : {0}".format(server.sockets[0].getsockname()))
         try:
-            loop.run_forever()
+            self.loop.run_forever()
         except KeyboardInterrupt:
             print("Server Stopped...............................\n\n\n")
 
@@ -30,7 +31,7 @@ class Server:
 
     async def handleClient(self,reader,writer):
         data=await reader.read(100)
-        message=data.decode()
+        message=pickle.dumps(data)
         peername=writer.get_extra_info("peername")
         print("Received {0} from Peer : {1}".format(message,peername))
         print("Client's Publickey : {0}".format(message))
@@ -43,7 +44,7 @@ class Server:
         """
         self.encrypt=EncryptionECDH("Server",message)
         print("Calculating shared secret for server side")
-        to_be_sent = self.encrypt.extractPublicKey()
+        to_be_sent = pickle.loads(self.encrypt.extractPublicKey())
         writer.write(to_be_sent)
         await writer.drain()
         print("Close the client socket")
