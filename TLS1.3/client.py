@@ -1,32 +1,28 @@
 """
 Author : abhishek18620
 Date : 2018-03-30
-File : __main__.py
-Doc: http://asyncio.readthedocs.io/en/latest/webscraper.html
+File : client.py
 """
 from Encryption import EncryptionECDH
 import asyncio
 import time
+import argparse
 
-class Server:
-    ques={
-        "what is your name": "Server",
-        "what do you do": "I serves authnticated clients"
-    }
+class Client:
 
-    def __init__(self):
-        print(self.ques)
+    def __init__(self,identity):
+        self.identity=identity
         self.loop=asyncio.get_event_loop()
-        self.coro=asyncio.start_server(self.handleClient,'127.0.0.1',7777,loop=loop)
-        server=self.loop.run_until_complete(self.coro)
+        message=initial_message_build()
+        client=self.loop.run_until_complete(self.coro)
         print("Serving on : {0}".format(server.sockets[0].getsockname()))
         try:
             loop.run_forever()
         except KeyboardInterrupt:
             print("Server Stopped...............................\n\n\n")
 
-    def AddQuestion(self ,que ,ans):
-        self.ques[que]=ans
+    def initial_message_build(self):
+        self.encrypt=EncryptionECDH(self.identity,)
 
     async def handleClient(self,reader,writer):
         data=await reader.read(100)
@@ -50,4 +46,8 @@ class Server:
         writer.close()
 
 if __name__=="__main__":
-    serverobj=Server()
+    parser=argparse.ArgumentParser()
+    parser.add_argumentnt("--identity",type=str,help="--identity for specifying client's identity")
+    args=parser.parse_args()
+    if args.identity:
+        clientobj=Client(args.identity)

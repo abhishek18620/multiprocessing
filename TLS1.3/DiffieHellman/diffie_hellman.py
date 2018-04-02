@@ -33,8 +33,16 @@ class ECDH:
                 Q = Q + point
                 i += 1
 
+    def getSharedSecret(self):
+        return self.sharedSecret
 
-    def generate(self,person): #person just for debugging purposes
+    def getSecret(self):
+        return self.aliceSecretKey
+
+    def getPublic(self):
+        return self.alicePublicKey
+
+    def generate(self,person,receivedKey): #person just for debugging purposes
         F = FiniteField(3851, 1)
         """
         NOTE: a,b,x,y could be random as well
@@ -50,12 +58,12 @@ class ECDH:
         #bobSecretKey = generateSecretKey(8)
         print("{0}Secret key is : {1}".format(person,repr(self.aliceSecretKey)))
         #print('Secret keys are %d, %d' % (self.aliceSecretKey, bobSecretKey))
-?!?jedi=0, ?!?                                         (*_*param privateKey*_*, param generator, param sendFunction) ?!?jedi?!?
+
         self.alicePublicKey = self.sendDH(self.aliceSecretKey, basePoint, lambda x:x)
         print("{0}Public key is : {1}".format(person,self.alicePublicKey))
         #bobPublicKey = sendDH(bobSecretKey, basePoint, lambda x:x)
 
-        self.sharedSecret = self.receiveDH(self.aliceSecretKey, lambda: self.alicePublicKey)
+        self.sharedSecret = self.receiveDH(receivedKey, lambda: self.alicePublicKey)
         #sharedSecret2 = receiveDH(aliceSecretKey, lambda: bobPublicKey)
         print("{0}Shared secret is : {1}".format(person,repr(self.sharedSecret)))
         #print('Shared secret is %s == %s' % (sharedSecret1, sharedSecret2))

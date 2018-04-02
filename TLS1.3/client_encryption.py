@@ -1,8 +1,10 @@
 """
 Author : abhishek18620
-Date : 2018-04-01
-File : Encryption.py
+Date : 2018-04-02
+File : client_encryption.py
+
 """
+
 from DiffieHellman import diffie_hellman
 import cryptography
 
