@@ -3,51 +3,59 @@ Author : abhishek18620
 Date : 2018-03-30
 File : client.py
 """
-from Encryption import EncryptionECDH
+from DiffieHellman.elliptic import Point
+from client_encryption import EncryptionECDH
 import asyncio
 import time
 import argparse
+import pickle
 
 class Client:
 
     def __init__(self,identity):
         self.identity=identity
         self.loop=asyncio.get_event_loop()
-        message=initial_message_build()
-        client=self.loop.run_until_complete(self.coro)
-        print("Serving on : {0}".format(server.sockets[0].getsockname()))
+        message=self.initial_message_build()
+        client=self.loop.run_until_complete(self.tcp_sender(message,self.loop))
         try:
-            loop.run_forever()
+            self.loop.run_forever()
         except KeyboardInterrupt:
             print("Server Stopped...............................\n\n\n")
+        self.loop.close()
 
     def initial_message_build(self):
-        self.encrypt=EncryptionECDH(self.identity,)
+        """
+        generates
+        1) secret key
+        2) public key
+        """
+        self.encrypt=EncryptionECDH(self.identity)
+        return self.encrypt.extractPublicKey()
 
-    async def handleClient(self,reader,writer):
-        data=await reader.read(100)
-        message=data.decode()
-        peername=writer.get_extra_info("peername")
-        print("Received {0} from Peer : {1}".format(message,peername))
-        print("Client's Publickey : {0}".format(message))
-        """
-        almost everythings done with the following call
-        will setup all required keys:
-        1) publicKey
-        2) secretKey
-        3) calculates sharedsecretKey
-        """
-        self.encrypt=EncryptionECDH("Server",message)
-        print("Calculating shared secret for server side")
-        to_be_sent = self.encrypt.extractPublicKey()
-        writer.write(to_be_sent)
-        await writer.drain()
-        print("Close the client socket")
+    async def tcp_sender(self,message,loop):
+        msg1=message
+        while True:
+            reader,writer= await asyncio.open_connection('127.0.0.1',7777,loop=loop)
+            print("Sending message......{0}".format(message))
+            # converting object into bytes
+            nonlocal msg1
+            msg1=self.encrypt.extractPublicKey()
+            msg=pickle.dumps(msg1)
+            writer.write(msg)
+            """
+            Initially this should be the server's
+            public Key which is received key in our case
+            """
+            data_received=await reader.read(100)
+            data=pickle.loads(data_received)
+            #call to create client side sharedsecret
+            self.encrypt.secretGeneration(self.identity,data)
+            await asyncio.sleep(0.5)
         writer.close()
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
-    parser.add_argumentnt("--identity",type=str,help="--identity for specifying client's identity")
+    parser.add_argument("--identity",type=str,help="--identity for specifying client's identity")
     args=parser.parse_args()
     if args.identity:
         clientobj=Client(args.identity)
