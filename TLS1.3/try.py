@@ -3,12 +3,24 @@ Author : abhishek18620
 Date : 2018-03-30
 File : client.py
 """
-#from client_encryption import EncryptionECDH
-from elliptic import Point
+from DiffieHellman.finitefield.finitefield import FiniteField
+from DiffieHellman.elliptic import *
+from client_encryption import EncryptionECDH
 import asyncio
 import time
 import argparse
 import pickle
+
+class pickleable:
+
+    def __init__(self,x,y):
+        self.x=int(x)
+        self.y=int(y)
+
+    def __str__(self):
+        return "({0}, {1})".format(self.x, self.y)
+
+
 
 class Client:
 
@@ -43,8 +55,9 @@ class Client:
             WARNING : local object not pickleable , needs to be fixed
             nonlocal can be used but only in nested functions
             global can't be updated in local scope
+            Workaround : create d a class pickleable with integer values
             """
-            message=Point(messagetemp.curve,messagetemp.x,messagetemp.y)
+            message=pickleable(messagetemp.x,messagetemp.y)
             print(message)
             msg=pickle.dumps(message)
             print("Pickled obj : {0}".format(repr(msg)))
@@ -56,9 +69,15 @@ class Client:
             data_received=await reader.read(100)
             data=pickle.loads(data_received)
             #call to create client side sharedsecret
+            data=self.pickleableToPoint(pickle.loads(data_received))
             self.encrypt.secretGeneration(self.identity,data)
             await asyncio.sleep(0.5)
         writer.close()
+
+    def pickleableToPoint(self,obj):
+        F=FiniteField(3851,1)
+        curve=EllipticCurve(a=F(324),b=F(1287))
+        return Point(curve,F(obj.x),F(obj.y))
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
