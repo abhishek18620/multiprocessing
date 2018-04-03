@@ -10,6 +10,7 @@ from Encryption import EncryptionECDH
 import asyncio
 import time
 import pickle
+import argparse
 
 class pickleable:
 
@@ -27,10 +28,11 @@ class Server:
         "what do you do": "I serves authnticated clients"
     }
 
-    def __init__(self):
+    def __init__(self,host):
         print(self.ques)
+        self.host=host
         self.loop=asyncio.get_event_loop()
-        self.coro=asyncio.start_server(self.handleClient,'127.0.0.1',7777,loop=self.loop)
+        self.coro=asyncio.start_server(self.handleClient,self.host,7777,loop=self.loop)
         server=self.loop.run_until_complete(self.coro)
         print("Serving on : {0}".format(server.sockets[0].getsockname()))
         try:
@@ -76,4 +78,8 @@ class Server:
 
 
 if __name__=="__main__":
-    serverobj=Server()
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--host",type=str,help="server you want to connect")
+    args=parser.parse_args()
+    if args.host:
+        serverobj=Server(args.host)
