@@ -45,33 +45,33 @@ class Client:
         return self.encrypt.extractPublicKey()
 
     async def tcp_sender(self,messagetemp,loop):
-        while True:
-            reader,writer= await asyncio.open_connection('127.0.0.1',7777,loop=loop)
-            print("Sending message......{0}".format(messagetemp))
-            """
-            converting object into bytes
-            nonlocal msg1
-            msg1=self.encrypt.extractPublicKey()
-            WARNING : local object not pickleable , needs to be fixed
-            nonlocal can be used but only in nested functions
-            global can't be updated in local scope
-            Workaround : create d a class pickleable with integer values
-            """
-            message=pickleable(messagetemp.x,messagetemp.y)
-            print(message)
-            msg=pickle.dumps(message)
-            print("Pickled obj : {0}".format(repr(msg)))
-            writer.write(msg)
-            """
-            Initially this should be the server's
-            public Key which is received key in our case
-            """
-            data_received=await reader.read(100)
-            data=pickle.loads(data_received)
-            #call to create client side sharedsecret
-            data=self.pickleableToPoint(pickle.loads(data_received))
-            self.encrypt.secretGeneration(self.identity,data)
-            await asyncio.sleep(0.5)
+        #while True:
+        reader,writer= await asyncio.open_connection('127.0.0.1',7777,loop=loop)
+        print("Sending message......{0}".format(messagetemp))
+        """
+        converting object into bytes
+        nonlocal msg1
+        msg1=self.encrypt.extractPublicKey()
+        WARNING : local object not pickleable , needs to be fixed
+        nonlocal can be used but only in nested functions
+        global can't be updated in local scope
+        Workaround : create d a class pickleable with integer values
+        """
+        message=pickleable(messagetemp.x,messagetemp.y)
+        print(message)
+        msg=pickle.dumps(message)
+        print("Pickled obj : {0}".format(repr(msg)))
+        writer.write(msg)
+        """
+        Initially this should be the server's
+        public Key which is received key in our case
+        """
+        data_received=await reader.read(100)
+        data=pickle.loads(data_received)
+        #call to create client side sharedsecret
+        data=self.pickleableToPoint(pickle.loads(data_received))
+        self.encrypt.secretGeneration(self.identity,data)
+        await asyncio.sleep(0.5)
         writer.close()
 
     def pickleableToPoint(self,obj):

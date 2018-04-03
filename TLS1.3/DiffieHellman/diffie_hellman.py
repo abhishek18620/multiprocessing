@@ -63,8 +63,10 @@ class ECDH:
         print("{0}Public key is : {1}".format(person,self.alicePublicKey))
         #bobPublicKey = sendDH(bobSecretKey, basePoint, lambda x:x)
 
+
+    #receivedKey=
     def generateSharedSecret(self,person,receivedKey):
-        self.sharedSecret = self.receiveDH(receivedKey, lambda: self.alicePublicKey)
+        self.sharedSecret = self.receiveDH(self.aliceSecretKey, lambda: receivedKey)
         #sharedSecret2 = receiveDH(aliceSecretKey, lambda: bobPublicKey)
         print("{0}Shared secret is : {1}".format(person,repr(self.sharedSecret)))
         #print('Shared secret is %s == %s' % (sharedSecret1, sharedSecret2))
