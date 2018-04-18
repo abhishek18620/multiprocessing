@@ -13,9 +13,10 @@ import pickle
 
 class pickleable:
 
-    def __init__(self,x,y):
+    def __init__(self,x,y,identity):
         self.x=int(x)
         self.y=int(y)
+        self.identity=identity
 
     def __str__(self):
         return "({0}, {1})".format(self.x, self.y)
@@ -59,7 +60,7 @@ class Client:
         global can't be updated in local scope
         Workaround : create d a class pickleable with integer values
         """
-        message=pickleable(messagetemp.x,messagetemp.y)
+        message=pickleable(messagetemp.x,messagetemp.y,self.identity)
         print(message)
         msg=pickle.dumps(message)
         print("Pickled obj : {0}".format(repr(msg)))

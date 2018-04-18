@@ -14,9 +14,10 @@ import argparse
 
 class pickleable:
 
-    def __init__(self,x,y):
+    def __init__(self,x,y,identity):
         self.x=int(x)
         self.y=int(y)
+        self.identity=identity
 
     def __str__(self):
         return "({0}, {1})".format(self.x, self.y)
@@ -48,9 +49,10 @@ class Server:
         #data should be a pickleable object
         messagetemp=pickle.loads(data)
         #message is a Point object
+        client=messagetemp.identity
         message=self.pickleableToPoint(messagetemp)
         peername=writer.get_extra_info("peername")
-        print("Received {0} from Peer : {1}".format(message,peername))
+        print("Received {0} from Peer : {1}".format(message,client))
         print("Client's Publickey : {0}".format(message))
         """
         almost everythings done with the following call
@@ -62,7 +64,7 @@ class Server:
         self.encrypt=EncryptionECDH("Server",message)
         print("Calculating shared secret for server side")
         tempkey=self.encrypt.extractPublicKey()
-        to_be_sent_temp=pickleable(tempkey.x , tempkey.y)
+        to_be_sent_temp=pickleable(tempkey.x , tempkey.y, client)
         to_be_sent = pickle.dumps(to_be_sent_temp)
         writer.write(to_be_sent)
         await writer.drain()
