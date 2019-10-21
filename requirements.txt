@@ -16,7 +16,7 @@ pyOpenSSL==17.4.0
 requests==2.18.4
 service-identity==17.0.0
 six==1.11.0
-Twisted==17.9.0
+Twisted==19.7.0
 urllib3==1.22
 zope.interface==4.4.3
 asn1crypto==0.24.0
@@ -39,7 +39,7 @@ pyOpenSSL==19.0.0
 requests==2.21.0
 service-identity==17.0.0
 six==1.12.0
-Twisted==17.9.0
+Twisted==19.7.0
 urllib3==1.24.1
 zope.interface==4.4.3
 asn1crypto==0.24.0
@@ -62,6 +62,6 @@ pyOpenSSL==19.0.0
 requests==2.21.0
 service-identity==17.0.0
 six==1.12.0
-Twisted==17.9.0
+Twisted==19.7.0
 urllib3==1.24.1
 zope.interface==4.4.3
