@@ -26,7 +26,7 @@ certifi==2018.11.29
 cffi==1.11.5
 chardet==3.0.4
 constantly==15.1.0
-cryptography==2.5
+cryptography==3.2
 hyperlink==17.3.1
 idna==2.8
 incremental==17.5.0
@@ -49,7 +49,7 @@ certifi==2018.11.29
 cffi==1.11.5
 chardet==3.0.4
 constantly==15.1.0
-cryptography==2.5
+cryptography==3.2
 hyperlink==17.3.1
 idna==2.8
 incremental==17.5.0
