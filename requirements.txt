@@ -40,7 +40,7 @@ requests==2.21.0
 service-identity==17.0.0
 six==1.12.0
 Twisted==17.9.0
-urllib3==1.24.1
+urllib3==1.26.5
 zope.interface==4.4.3
 asn1crypto==0.24.0
 attrs==17.3.0
@@ -63,5 +63,5 @@ requests==2.21.0
 service-identity==17.0.0
 six==1.12.0
 Twisted==17.9.0
-urllib3==1.24.1
+urllib3==1.26.5
 zope.interface==4.4.3
